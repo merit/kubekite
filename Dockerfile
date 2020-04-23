@@ -1,4 +1,14 @@
+FROM golang:1.14.1 as go-builder
+
+WORKDIR /go/src
+COPY . github.com/ProjectSigma/kubekite
+WORKDIR /go/src/github.com/ProjectSigma/kubekite/cmd/kubekite
+
+# Build and strip our binary
+RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -a -installsuffix cgo -o kubekite .
+
 FROM ubuntu
+ARG JOB_TEMPLATE=job-templates/job.yaml
 
 ENV GOSU_VERSION 1.10
 
@@ -18,9 +28,9 @@ RUN apt-get update && \
     /gosu nobody true
 
 # Copy the binary over from the builder image
-COPY kubekite /
+COPY --from=go-builder /go/src/github.com/ProjectSigma/kubekite/cmd/kubekite/kubekite /
 RUN chmod +x /kubekite
 
-COPY job-templates/job.yaml /
+COPY ${JOB_TEMPLATE} /job.yaml
 
 CMD ["/kubekite"]
