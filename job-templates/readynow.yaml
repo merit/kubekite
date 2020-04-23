@@ -1,0 +1,84 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: buildkite-agent
+spec:
+  template:
+    metadata:
+      labels:
+        application: buildkite-agent
+    spec:
+      restartPolicy: OnFailure
+      terminationGracePeriodSeconds: 1800
+      containers:
+      - name: buildkite-agent
+        image: buildkite/agent:latest
+        args: ["start", "--disconnect-after-job", "--disconnect-after-job-timeout", "300"]
+        imagePullPolicy: Always
+        securityContext:
+          privileged: true
+        env:
+          - name: TERM
+            value: dumb
+          - name: BUILDKITE_AGENT_TOKEN
+            valueFrom: {secretKeyRef: {name: buildkite-agent, key: token}}
+          - name: BUILDKITE_API_TOKEN
+            valueFrom: {secretKeyRef: {name: buildkite-api, key: token}}
+          - name: BUILDKITE_BUILD_PATH
+            value: /scratch
+          - name: BUILDKITE_AGENT_DEBUG
+            value: "true"
+          - name: BUILDKITE_GIT_CLEAN_FLAGS
+            value: "-fdqx"
+            # Deprecated, please use `CYPRESS_KEY_PLATFORM` instead
+          - name: CYPRESS_KEY
+            valueFrom: {secretKeyRef: {name: cypress-dashboard, key: token}}
+          - name: CYPRESS_KEY_PLATFORM
+            valueFrom: {secretKeyRef: {name: cypress-dashboard, key: token}}
+          - name: CYPRESS_KEY_CIWM
+            valueFrom: {secretKeyRef: {name: cypress-dashboard, key: token-ciwm}}
+          - name: EXPO_USERNAME
+            valueFrom: {secretKeyRef: {name: expo-account, key: username}}
+          - name: EXPO_PASSWORD
+            valueFrom: {secretKeyRef: {name: expo-account, key: password}}
+        volumeMounts:
+          - name: ssh-keys
+            mountPath: /root/.ssh/id_rsa
+            subPath: id_rsa
+          - name: ssh-keys
+            mountPath: /root/.ssh/id_rsa.pub
+            subPath: id_rsa.pub
+          - name: docker-binary
+            mountPath: /usr/bin/docker
+          - name: docker-socket
+            mountPath: /var/run/docker.sock
+          - name: yarn-cache
+            mountPath: /tmp/yarn-cache
+          - name: browserstack-tests-ssh-keys
+            mountPath: /root/.ssh/browserstack-tests-deploy-key
+            subPath: browserstack-tests-deploy-key
+          - name: browserstack-tests-ssh-keys
+            mountPath: /root/.ssh/browserstack-tests-deploy-key.pub
+            subPath: browserstack-tests-deploy-key.pub
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "1024M"
+          limits:
+            cpu: "500m"
+            memory: "1024M"
+      volumes:
+        - name: browserstack-tests-ssh-keys
+          secret:
+            secretName: browserstack-tests-ssh
+            defaultMode: 0400
+        - name: ssh-keys
+          secret:
+            secretName: buildkite-agent-ssh-readynow
+            defaultMode: 0400
+        - name: yarn-cache
+          hostPath: {path: /tmp/yarn-cache}
+        - name: docker-binary
+          hostPath: {path: /usr/bin/docker}
+        - name: docker-socket
+          hostPath: {path: /var/run/docker.sock}
