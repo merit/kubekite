@@ -4,17 +4,11 @@
 ## Usage
 
 ### How to build a new version of the container
-- Build the binary docker image first: `docker build . -f Dockerfile-buildbinary`
-- Run the binary docker image: `docker run $IMAGE_HASH`
-- Copy the kubekite binary from the container into the root of this repo: `docker container cp $CONTAINER_HASH:/go/src/github.com/ProjectSigma/kubekite/cmd/kubekite/kubekite .`
-  - You can get the container hash by running `docker ps -ql`
-- To build and push to GCR in one go run `VERSION=[YOUR VERSION] ./build.sh`
+- To build and push to GCR in one go run `VERSION=[YOUR VERSION] ./build_all.sh`
 - Alternatively
-  - Build the full docker image, and tag it with the GCR resource: `docker build . -f Dockerfile-buildimage -t us.gcr.io/sigma-1330/kubekite:$VERSION`
+  - Build the full docker image, and tag it with the GCR resource: `docker build . -t us.gcr.io/sigma-1330/kubekite:$VERSION`
   - Push the kubekite image to GCR: `docker push us.gcr.io/sigma-1330/kubekite:$VERSION`
-
-Note:
-If you only want to change `job.yaml` on already built $BASE_VERSION use `VERSION=[YOUR VERSION] BASE_VERSION=[BASE VERSION] ./build.sh `
+- To build a specific job: `docker build . --build-arg JOB_TEMPLATE=job-templates/[job].yaml -t us.gcr.io/sigma-1330/kubekite:$VERSION-[job]`
 
 Kubekite is designed to be run within Kubernetes as a single-replica deployment.  An example deployment spec [can be found here](https://github.com/ProjectSigma/kubekite/blob/master/kube-deploy/sigma-1330/deployment.yaml).  You can build and deploy kubekite from within Buildkite using the [included pipeline](https://github.com/ProjectSigma/kubekite/tree/master/.buildkite).
 
