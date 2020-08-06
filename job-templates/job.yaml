@@ -43,6 +43,8 @@ spec:
             valueFrom: {secretKeyRef: {name: expo-account, key: password}}
           - name: MAILOSAUR_KEY
             valueFrom: {secretKeyRef: {name: mailosaur-secret, key: api-key}}
+          - name: SENTRY_AUTH_TOKEN
+            valueFrom: {secretKeyRef: {name: sentry-api, key: token}}
         volumeMounts:
           - name: ssh-keys
             mountPath: /root/.ssh/id_rsa
