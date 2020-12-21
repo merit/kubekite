@@ -10,9 +10,11 @@ spec:
     spec:
       restartPolicy: OnFailure
       terminationGracePeriodSeconds: 1800
+      serviceAccountName: buildkite-agent
+      automountServiceAccountToken: true
       containers:
       - name: buildkite-agent
-        image: us.gcr.io/sigma-1330/buildkite/base:1.0
+        image: us.gcr.io/sigma-1330/buildkite/base:1.1
         args: ["start", "--disconnect-after-job", "--disconnect-after-job-timeout", "300"]
         imagePullPolicy: Always
         securityContext:

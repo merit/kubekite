@@ -2,7 +2,7 @@
 
 set -e -u -o -x pipefail
 
-KUBEKITE_IMAGE_BASE=us.gcr.io/sigma-1330/kubekite
+KUBEKITE_IMAGE_BASE=us.gcr.io/mrt-cicd-i-8c9c/kubekite
 TEMPLATES=job-templates/*
 REGEX='.*\/(.*)\..*'
 

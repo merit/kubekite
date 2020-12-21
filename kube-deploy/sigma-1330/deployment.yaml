@@ -15,7 +15,7 @@ spec:
       serviceAccountName: kubekite
       containers:
       - name: kubekite
-        image: us.gcr.io/sigma-1330/kubekite:1.0
+        image: us.gcr.io/mrt-cicd-i-8c9c/kubekite:1.0
         imagePullPolicy: Always
         env:
           - name: BUILDKITE_API_TOKEN

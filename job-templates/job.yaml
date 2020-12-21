@@ -10,9 +10,11 @@ spec:
     spec:
       restartPolicy: OnFailure
       terminationGracePeriodSeconds: 1800
+      serviceAccountName: buildkite-agent
+      automountServiceAccountToken: true
       containers:
       - name: buildkite-agent
-        image: us.gcr.io/sigma-1330/buildkite/base:1.0
+        image: us.gcr.io/mrt-cicd-i-8c9c/buildkite/base:1.1
         args: ["start", "--disconnect-after-job", "--disconnect-after-job-timeout", "300"]
         imagePullPolicy: Always
         securityContext:
@@ -64,6 +66,8 @@ spec:
           - name: ssh-keys
             mountPath: /root/.ssh/id_rsa.pub
             subPath: id_rsa.pub
+          - name: service-account-token
+            mountPath: /root/service-account-token
           - name: docker-binary
             mountPath: /usr/bin/docker
           - name: docker-socket
@@ -91,6 +95,10 @@ spec:
         - name: ssh-keys
           secret:
             secretName: buildkite-agent-ssh
+            defaultMode: 0400
+        - name: service-account-token
+          secret:
+            secretName: buildkite-agent-access-token
             defaultMode: 0400
         - name: yarn-cache
           hostPath: {path: /tmp/yarn-cache}
