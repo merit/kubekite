@@ -49,6 +49,8 @@ spec:
             valueFrom: {secretKeyRef: {name: cypress-prod-healthcheck, key: password}}
           - name: MAILOSAUR_KEY
             valueFrom: {secretKeyRef: {name: mailosaur-secret, key: api-key}}
+          - name: SANDBOX_SUPER_USER_PWD
+            valueFrom: {secretKeyRef: {name: sandbox-super-user, key: password}}
         volumeMounts:
           - name: ssh-keys
             mountPath: /root/.ssh/id_rsa
