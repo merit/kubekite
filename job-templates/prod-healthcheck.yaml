@@ -51,6 +51,8 @@ spec:
             valueFrom: {secretKeyRef: {name: mailosaur-secret, key: api-key}}
           - name: SANDBOX_SUPER_USER_PWD
             valueFrom: {secretKeyRef: {name: sandbox-super-user, key: password}}
+          - name: SFTP_PASSWORD
+            valueFrom: {secretKeyRef: {name: sftp-secret, key: sftp-password}}
         volumeMounts:
           - name: ssh-keys
             mountPath: /root/.ssh/id_rsa
