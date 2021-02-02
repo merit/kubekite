@@ -59,6 +59,8 @@ spec:
             valueFrom: {secretKeyRef: {name: saucelabs-account, key: username}}
           - name: SAUCELABS_API_KEY
             valueFrom: {secretKeyRef: {name: saucelabs-account, key: api-key}}
+          - name: CICD_SCALR_TOKEN
+            valueFrom: {secretKeyRef: {name: scalr-cicd-token, key: token}}
         volumeMounts:
           - name: ssh-keys
             mountPath: /root/.ssh/id_rsa
@@ -66,8 +68,6 @@ spec:
           - name: ssh-keys
             mountPath: /root/.ssh/id_rsa.pub
             subPath: id_rsa.pub
-          - name: service-account-token
-            mountPath: /root/service-account-token
           - name: docker-binary
             mountPath: /usr/bin/docker
           - name: docker-socket
@@ -95,10 +95,6 @@ spec:
         - name: ssh-keys
           secret:
             secretName: buildkite-agent-ssh
-            defaultMode: 0400
-        - name: service-account-token
-          secret:
-            secretName: buildkite-agent-access-token
             defaultMode: 0400
         - name: yarn-cache
           hostPath: {path: /tmp/yarn-cache}
