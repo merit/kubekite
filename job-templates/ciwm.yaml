@@ -32,6 +32,8 @@ spec:
             value: "true"
           - name: BUILDKITE_GIT_CLEAN_FLAGS
             value: "-fdqx"
+          - name: GITHUB_READ_PACKAGES
+            valueFrom: {secretKeyRef: {name: github-read-packages, key: token}}
         volumeMounts:
           - name: ssh-keys
             mountPath: /root/.ssh/id_rsa
